@@ -546,4 +546,9 @@ Tu configuración incluye los siguientes plugins principales:
 
 ---
 
-**Última actualización**: 16 de octubre de 2025
+## Créditos
+
+- Basado en [LazyVim](https://www.lazyvim.org/)
+- Gentleman Dots [Gentleman Dots GitHub](https://github.com/Gentleman-Programming/Gentleman.Dots)
+
+**Última actualización**: 10 de noviembre de 2025
