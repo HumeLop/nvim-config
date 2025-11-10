@@ -2,9 +2,46 @@
 
 Esta es una documentación autogenerada de la configuración de Neovim, basada en [LazyVim](https://www.lazyvim.org/).
 
+## 📚 Documentación Disponible
+
+- **[GUIA_COMANDOS.md](./GUIA_COMANDOS.md)** - 🆕 Guía completa de comandos y mejoras implementadas
+- **[COMANDOS.md](./COMANDOS.md)** - Documentación completa de todos los keymaps y comandos
+- **[OIL_COMANDOS.md](./OIL_COMANDOS.md)** - Guía específica del explorador de archivos Oil
+- **[MEJORAS_IMPLEMENTADAS.md](./MEJORAS_IMPLEMENTADAS.md)** - Changelog técnico de mejoras
+
+## 🚀 Inicio Rápido
+
+```vim
+" Ver formatters disponibles
+:FormatInfo
+
+" Formatear manualmente
+:Format
+
+" Explorar archivos con Oil
+-
+
+" Recargar configuración
+<leader>ur
+
+" Cambiar colorscheme
+<leader>uc
+```
+
 ## Resumen General
 
 Tu configuración personaliza LazyVim con un fuerte enfoque en el desarrollo frontend (Angular, React), la integración con herramientas de IA, y una experiencia de usuario (UI) muy personalizada. Incluye múltiples temas de colores, gestores de notas como Obsidian, y varias utilidades para mejorar la productividad.
+
+## 🆕 Últimas Actualizaciones (5 nov 2025)
+
+- ✅ **Sistema de formateo inteligente** - Detección automática de formatters
+- ✅ **Oil.nvim completamente restaurado** - Con iconos y comandos personalizados
+- ✅ **Optimizaciones de performance** - Manejo automático de archivos grandes
+- ✅ **Comandos de debugging** - `:FormatInfo`, `:Format`, `:FormatToggle`
+- ✅ **Mejoras en blink.cmp** - Configuración completa con todas las fuentes
+- ✅ **Documentación completa** - Guías actualizadas y detalladas
+
+Ver [GUIA_COMANDOS.md](./GUIA_COMANDOS.md) para todos los comandos nuevos.
 
 ## Estructura de la Configuración
 

@@ -4,9 +4,6 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
--- Map Ctrl+b in insert mode to delete to the end of the word without leaving insert mode
-vim.keymap.set("i", "<C-b>", "<C-o>de")
-
 -- Map Ctrl+c to escape from other modes
 vim.keymap.set({ "i", "n", "v" }, "<C-c>", [[<C-\><C-n>]])
 
@@ -37,6 +34,20 @@ vim.keymap.set("n", "<leader>oq", "<cmd>ObsidianQuickSwitch<CR>", { desc = "Quic
 
 ----- OIL -----
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+vim.keymap.set("n", "<leader>-", function()
+  local oil = require("oil")
+  local current_buf = vim.api.nvim_get_current_buf()
+  local current_file = vim.api.nvim_buf_get_name(current_buf)
+
+  if current_file and current_file ~= "" then
+    local dir = vim.fn.fnamemodify(current_file, ":h")
+    oil.open(dir)
+  else
+    oil.open()
+  end
+end, { desc = "Open Oil in current file's directory" })
+vim.keymap.set("n", "<leader>fo", "<CMD>Oil<CR>", { desc = "Open Oil file explorer" })
+vim.keymap.set("n", "<leader>E", "<CMD>Oil --float<CR>", { desc = "Open Oil (floating)" })
 
 -- Delete all buffers but the current one
 vim.keymap.set(
@@ -52,49 +63,42 @@ vim.keymap.set({ "i", "n", "x" }, "<A-k>", "<Nop>", { silent = true })
 vim.keymap.set("x", "J", "<Nop>", { silent = true })
 vim.keymap.set("x", "K", "<Nop>", { silent = true })
 
--- Custom save function
-local function SaveFile()
-  local filepath = vim.fn.expand("%:p")
-
-  -- Check if the file has a name
-  if filepath == "" or filepath == "/dev/null" then
-    -- The file has no name, so we prompt the user for one
-    vim.ui.input({ prompt = "Save as: " }, function(filename)
-      if filename then
-        local fullpath = vim.fn.expand(filename)
-        local success, err = pcall(function()
-          vim.cmd("silent! write " .. fullpath)
-        end)
-
-        if success then
-          vim.notify(filename .. " Saved!")
-        else
-          vim.notify("Error: " .. err, vim.log.levels.ERROR)
-        end
-      else
-        vim.notify("Save operation cancelled.", vim.log.levels.INFO)
+-- Simplified save with notification
+vim.keymap.set("n", "<C-s>", function()
+  local bufname = vim.api.nvim_buf_get_name(0)
+  if bufname == "" then
+    vim.ui.input({ prompt = "Nombre del archivo: " }, function(filename)
+      if filename and filename ~= "" then
+        vim.cmd("write " .. filename)
+        vim.notify("💾 Guardado como: " .. filename, vim.log.levels.INFO)
       end
     end)
-  else
-    -- The file already has a name, so we just save it
-    local filename = vim.fn.expand("%:t")
-    local success, err = pcall(function()
-      vim.cmd("silent! write")
-    end)
-
-    if success then
-      vim.notify(filename .. " Saved!")
-    else
-      vim.notify("Error: " .. err, vim.log.levels.ERROR)
-    end
+    return
   end
-end
+  vim.cmd("write")
+  vim.notify("💾 Guardado!", vim.log.levels.INFO)
+end, { desc = "Save file" })
 
--- Redefine Ctrl+s to save with the custom function
-vim.keymap.set({ "n", "i" }, "<C-s>", function()
-  vim.cmd("stopinsert") -- asegúrate de salir de insert
-  SaveFile()
-end, { noremap = true, silent = true })
+-- Save from insert mode (escape first, then save)
+vim.keymap.set("i", "<C-s>", function()
+  vim.cmd("stopinsert")
+  local bufname = vim.api.nvim_buf_get_name(0)
+  if bufname == "" then
+    vim.ui.input({ prompt = "Nombre del archivo: " }, function(filename)
+      if filename and filename ~= "" then
+        vim.cmd("write " .. filename)
+        vim.notify("💾 Guardado como: " .. filename, vim.log.levels.INFO)
+      end
+    end)
+    return
+  end
+  vim.cmd("write")
+  vim.notify("💾 Guardado!", vim.log.levels.INFO)
+end, { desc = "Save file" })
+
+-- Quit buffer with Ctrl+q
+vim.keymap.set("n", "<C-q>", "<cmd>quit<CR>", { desc = "Quit buffer" })
+vim.keymap.set("i", "<C-q>", "<cmd>quit<CR>", { desc = "Quit buffer" })
 
 -- Helper function for visual grep
 local function visual_grep(opts)
@@ -159,3 +163,67 @@ vim.keymap.set("n", "<leader>md", function()
   vim.cmd("delmarks A-Z0-9")
   vim.notify("All marks deleted")
 end, { desc = "Delete all marks" })
+
+-- Colorscheme toggle
+local colorschemes = { "gentleman-kanagawa-blur", "catppuccin", "oldworld", "kanagawa" }
+local current_colorscheme_index = 1
+
+local function toggle_colorscheme()
+  -- Find the current colorscheme in the list
+  for i, name in ipairs(colorschemes) do
+    if vim.g.colors_name == name then
+      current_colorscheme_index = i
+      break
+    end
+  end
+
+  -- Increment and wrap around the index
+  current_colorscheme_index = (current_colorscheme_index % #colorschemes) + 1
+  local next_colorscheme = colorschemes[current_colorscheme_index]
+
+  -- Set the new colorscheme
+  vim.cmd("colorscheme " .. next_colorscheme)
+  vim.notify("🎨 Tema cambiado a: " .. next_colorscheme, vim.log.levels.INFO)
+end
+
+vim.keymap.set("n", "<leader>uc", toggle_colorscheme, { desc = "Cycle to next colorscheme" })
+
+-- Reload configuration
+vim.keymap.set("n", "<leader>ur", function()
+  vim.cmd("source $MYVIMRC")
+  vim.notify("🔄 Configuración recargada!", vim.log.levels.INFO)
+end, { desc = "Reload Neovim configuration" })
+
+-- Quick fix toggle
+local qf_open = false
+vim.keymap.set("n", "<leader>xq", function()
+  if qf_open then
+    vim.cmd("cclose")
+    qf_open = false
+  else
+    vim.cmd("copen")
+    qf_open = true
+  end
+end, { desc = "Toggle Quickfix list" })
+
+-- Format keymaps
+vim.keymap.set("n", "<leader>cf", function()
+  vim.cmd("FormatInfo")
+end, { desc = "Show format info" })
+
+vim.keymap.set("n", "<leader>cF", function()
+  vim.cmd("Format")
+end, { desc = "Format buffer manually" })
+
+vim.keymap.set("n", "<leader>uF", function()
+  vim.cmd("FormatToggle")
+end, { desc = "Toggle format on save" })
+
+-- Performance keymaps
+vim.keymap.set("n", "<leader>up", function()
+  vim.cmd("Lazy profile")
+end, { desc = "Lazy profile" })
+
+vim.keymap.set("n", "<leader>us", function()
+  vim.cmd("StartupTime")
+end, { desc = "Measure startup time" })

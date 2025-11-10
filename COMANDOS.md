@@ -7,17 +7,18 @@ Esta es la documentación completa de todos los comandos y keybindings configura
 ## 🎯 Índice
 
 1. [Comandos Generales](#-comandos-generales)
-2. [Navegación Tmux](#-navegación-tmux)
-3. [Obsidian](#-obsidian)
-4. [Oil (Explorador de Archivos)](#-oil-explorador-de-archivos)
-5. [Gestión de Buffers](#-gestión-de-buffers)
-6. [Búsqueda (Grep)](#-búsqueda-grep)
-7. [Marcas](#-marcas)
-8. [AI Assistant - CodeCompanion](#-ai-assistant---codecompanion)
-9. [AI Assistant - CopilotChat](#-ai-assistant---copilotchat)
-10. [Preview (Goto Preview)](#-preview-goto-preview)
-11. [Git](#-git)
-12. [Misceláneos](#-misceláneos)
+2. [Formateo](#-formateo)
+3. [Navegación Tmux](#-navegación-tmux)
+4. [Obsidian](#-obsidian)
+5. [Oil (Explorador de Archivos)](#-oil-explorador-de-archivos)
+6. [Gestión de Buffers](#-gestión-de-buffers)
+7. [Búsqueda (Grep)](#-búsqueda-grep)
+8. [Marcas](#-marcas)
+9. [AI Assistant - CodeCompanion](#-ai-assistant---codecompanion)
+10. [AI Assistant - CopilotChat](#-ai-assistant---copilotchat)
+11. [Preview (Goto Preview)](#-preview-goto-preview)
+12. [Git](#-git)
+13. [Misceláneos](#-misceláneos)
 
 ---
 
@@ -51,6 +52,63 @@ Los siguientes atajos han sido deshabilitados:
 
 - `Alt+j` y `Alt+k` en todos los modos (insert, normal, visual)
 - `J` y `K` en modo visual
+
+---
+
+## 🎨 Formateo
+
+Sistema inteligente de formateo con detección automática de formatters.
+
+### Comandos
+
+| Comando         | Keymap       | Descripción                                   |
+| --------------- | ------------ | --------------------------------------------- |
+| `:Format`       | `<leader>cF` | Formatear buffer actual manualmente con info  |
+| `:FormatInfo`   | `<leader>cf` | Mostrar formatters disponibles para el buffer |
+| `:FormatToggle` | `<leader>uF` | Activar/desactivar autoformat al guardar      |
+
+### Cómo Funciona
+
+1. Primero intenta usar **conform.nvim** (prettier, stylua, etc.)
+2. Si no hay formatters, usa **LSP**
+3. Si no hay ninguno, guarda sin error
+
+### Formatters Disponibles
+
+Instalados vía Mason:
+
+- `prettier` - HTML, JS, TS, CSS, JSON
+- `stylua` - Lua
+- `shfmt` - Shell scripts
+- `biome` - JS/TS alternativo
+
+Para instalar más: `:Mason`
+
+### Tips
+
+**Ver qué se usará:**
+
+```vim
+:FormatInfo
+" o
+<leader>cf
+```
+
+**Formatear manualmente:**
+
+```vim
+:Format
+" o
+<leader>cF
+```
+
+**Desactivar autoformat:**
+
+```vim
+:FormatToggle
+" o
+<leader>uF
+```
 
 ---
 
@@ -88,11 +146,41 @@ Comandos para gestionar notas de Obsidian:
 
 ## 📂 Oil (Explorador de Archivos)
 
-| Tecla | Descripción                   |
-| ----- | ----------------------------- |
-| `-`   | Abrir directorio padre en Oil |
+### Keymaps Globales
 
-Oil es un explorador de archivos que permite editar el sistema de archivos como si fuera un buffer de texto.
+| Tecla        | Descripción                                  |
+| ------------ | -------------------------------------------- |
+| `-`          | Abrir directorio padre en Oil                |
+| `<leader>-`  | Abrir Oil en el directorio de trabajo actual |
+| `<leader>fo` | Abrir Oil file explorer                      |
+
+### Comandos de Usuario
+
+| Comando            | Descripción                           |
+| ------------------ | ------------------------------------- |
+| `:OilToggleHidden` | Mostrar/ocultar archivos ocultos      |
+| `:OilFloat`        | Abrir Oil en ventana flotante         |
+| `:OilCurrentDir`   | Abrir Oil en el directorio de trabajo |
+
+### Comandos Dentro de Oil
+
+| Tecla   | Descripción               |
+| ------- | ------------------------- |
+| `<CR>`  | Abrir archivo/directorio  |
+| `-`     | Ir al directorio padre    |
+| `_`     | Ir al cwd                 |
+| `<C-s>` | Abrir en split vertical   |
+| `<C-h>` | Abrir en split horizontal |
+| `<C-t>` | Abrir en nueva pestaña    |
+| `<C-p>` | Vista previa              |
+| `<C-c>` | Cerrar Oil                |
+| `<C-l>` | Refrescar vista           |
+| `g?`    | Mostrar ayuda             |
+| `g.`    | Toggle archivos ocultos   |
+| `gs`    | Cambiar orden             |
+| `gx`    | Abrir con app externa     |
+
+Oil es un explorador de archivos que permite editar el sistema de archivos como si fuera un buffer de texto. Ver [OIL_COMANDOS.md](./OIL_COMANDOS.md) para más detalles.
 
 ---
 
@@ -330,8 +418,20 @@ Tu configuración incluye los siguientes plugins principales:
 4. **AI Assistants**: Tienes dos asistentes IA disponibles - CodeCompanion y CopilotChat, úsalos según prefieras
 5. **Obsidian**: Si trabajas con notas, todos los comandos están bajo `<leader>o`
 6. **Preview**: Usa los comandos `gp*` para ver definiciones sin perder tu posición actual
+7. **Formateo**: Si algo no se formatea, usa `:FormatInfo` para ver qué formatters están disponibles
+8. **Oil**: Usa `-` para abrir el explorador de archivos y edita el filesystem como si fuera texto
+9. **Recargar config**: Usa `<leader>ur` para recargar la configuración sin reiniciar Neovim
+
+---
+
+## 📚 Documentación Adicional
+
+- **[GUIA_COMANDOS.md](./GUIA_COMANDOS.md)** - Guía detallada de comandos nuevos y mejoras
+- **[OIL_COMANDOS.md](./OIL_COMANDOS.md)** - Guía completa de Oil file explorer
+- **[MEJORAS_IMPLEMENTADAS.md](./MEJORAS_IMPLEMENTADAS.md)** - Changelog de mejoras técnicas
 
 ---
 
 **Fecha de creación**: 16 de octubre de 2025
-**Configuración**: LazyVim con plugins personalizados
+**Última actualización**: 5 de noviembre de 2025
+**Configuración**: LazyVim con plugins personalizados y optimizaciones

@@ -4,13 +4,13 @@ return {
   dependencies = { "saghen/blink.compat" },
   opts = {
     sources = {
-      default = { "avante_commands", "avante_mentions", "avante_files" },
+      -- Include standard sources + avante sources
+      default = { "lsp", "path", "snippets", "buffer", "avante_commands", "avante_mentions", "avante_files" },
       compat = {
         "avante_commands",
         "avante_mentions",
         "avante_files",
       },
-      -- LSP score_offset is typically 60
       providers = {
         avante_commands = {
           name = "avante_commands",
@@ -31,6 +31,35 @@ return {
           opts = {},
         },
       },
+    },
+    -- Appearance configuration
+    appearance = {
+      use_nvim_cmp_as_default = true,
+      nerd_font_variant = "mono",
+    },
+    -- Completion behavior
+    completion = {
+      accept = {
+        auto_brackets = {
+          enabled = true,
+        },
+      },
+      menu = {
+        draw = {
+          treesitter = { "lsp" },
+        },
+      },
+      documentation = {
+        auto_show = true,
+        auto_show_delay_ms = 200,
+      },
+      ghost_text = {
+        enabled = true,
+      },
+    },
+    -- Signature help
+    signature = {
+      enabled = true,
     },
   },
 }
